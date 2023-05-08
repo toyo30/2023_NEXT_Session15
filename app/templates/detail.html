@@ -9,7 +9,7 @@
   {% if user.is_authenticated and post.author.pk == user.pk %}
   <a href="{% url 'edit' post.pk %}">수정하기</a>
   <a href="{% url 'delete' post.pk %}">삭제하기</a>
-  <span>좋아요 수 : {{ post.likes.count }} </span>
+  <span class="like-count">좋아요 수 : {{ post.likes.count }} </span>
   {% endif %} {% for comment in post.comments.all %}
   <li>{{ comment.content }}</li>
   {% if user.is_authenticated and comment.author.pk == user.pk %}
@@ -20,12 +20,32 @@
     <input type="text" name="content" placeholder="댓글을 입력하세요" />
     <button type="submit">댓글 쓰기</button>
   </form>
-  <form action="{% url 'like' %}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="post_pk" value="{{post.pk}}" />
-    <button type="submit">좋아요</button>
-  </form>
+
+  <button class="like-button">좋아요</button>
   {% endif %}
 </div>
+
+<script>
+  const likeButton = document.querySelector(".like-button");
+  const likeCount = document.querySelector(".like-count");
+
+  const handleLike = () => {
+    fetch("/like", {
+      method: "POST",
+      body: JSON.stringify({
+        post_pk: "{{ post.pk }}",
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        likeCount.innerHTML = `좋아요 ${data.like_count}개`;
+      });
+  };
+
+  likeButton.addEventListener("click", handleLike);
+</script>
 
 {% endblock content %}
