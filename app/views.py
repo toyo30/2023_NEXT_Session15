@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
-from .models import Comment, Post
+from .models import Comment, Like, Post
 
 # Create your views here.
 
@@ -29,6 +29,7 @@ def new(request):
 
 def detail(request, post_pk):
     post = Post.objects.get(pk=post_pk)
+    likes = Like.objects.filter(post=post)
 
     if (request.method == 'POST'):
         Comment.objects.create(
@@ -38,7 +39,7 @@ def detail(request, post_pk):
         )
         return redirect('detail', post_pk)
 
-    return render(request, 'detail.html', {'post': post})
+    return render(request, 'detail.html', {'post': post, 'like_length': len(likes)})
 
 
 def edit(request, post_pk):
@@ -113,3 +114,19 @@ def mypage(request):
     posts = Post.objects.all()
     return render(request, 'mypage.html', { "posts":posts  })
 
+
+
+def like(request, post_pk):
+    post = Post.objects.get(pk=post_pk)
+    user_like = Like.objects.filter(user=request.user, post=post)
+    if (len(user_like) > 0):
+        user_like.delete()
+        return redirect('detail', post_pk)
+    
+    Like.objects.create(
+            post=post,
+            user=request.user
+    )
+    
+    return redirect('detail', post_pk)
+    
