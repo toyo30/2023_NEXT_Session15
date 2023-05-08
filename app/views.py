@@ -29,7 +29,6 @@ def new(request):
 
 def detail(request, post_pk):
     post = Post.objects.get(pk=post_pk)
-    likes = Like.objects.filter(post=post)
 
     if (request.method == 'POST'):
         Comment.objects.create(
@@ -39,7 +38,7 @@ def detail(request, post_pk):
         )
         return redirect('detail', post_pk)
 
-    return render(request, 'detail.html', {'post': post, 'like_length': len(likes)})
+    return render(request, 'detail.html', {'post': post})
 
 
 def edit(request, post_pk):

@@ -9,7 +9,7 @@
   {% if user.is_authenticated and post.author.pk == user.pk %}
   <a href="{% url 'edit' post.pk %}">수정하기</a>
   <a href="{% url 'delete' post.pk %}">삭제하기</a>
-  <span>좋아요 수 : {{ like_length }} </span>
+  <span>좋아요 수 : {{ post.likes.count }} </span>
   {% endif %} {% for comment in post.comments.all %}
   <li>{{ comment.content }}</li>
   {% if user.is_authenticated and comment.author.pk == user.pk %}
