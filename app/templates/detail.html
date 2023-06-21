@@ -41,6 +41,7 @@
   {% endif %}
 </div>
 
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
   const likeButton = document.querySelector(".like-button");
   const likeCount = document.querySelector(".like-count");
@@ -62,6 +63,30 @@
   };
 
   likeButton.addEventListener("click", handleLike);
+
+  const commentInput = document.querySelector(".input-comment");
+  const commentButton = document.querySelector(".button-comment");
+  const commentBox = document.querySelector(".comment-box");
+
+  const deleteComment = async (post_pk, comment_pk) => {
+    try {
+      const response = await axios.post(
+        `/delete_comment/${post_pk}/${comment_pk}`
+      );
+      if (response) {
+        commentBox.innerHTML = "";
+        response.data.comments.forEach((comment) => {
+          commentBox.innerHTML += `<li>${comment.content}</li>
+          <a onClick="deleteComment(${comment.post_pk}, ${comment.comment_pk})">댓글삭제</a>
+          
+          `;
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 </script>
 
 {% endblock content %}
