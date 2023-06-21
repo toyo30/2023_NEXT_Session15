@@ -87,6 +87,30 @@
     }
   };
 
+  const createComment = async () => {
+    const data = {
+      content: commentInput.value,
+    };
+
+    try {
+      const response = await axios.post(`/create_comment/{{post.pk}}`, data);
+
+      if (response) {
+        commentBox.innerHTML = "";
+        response.data.comments.forEach((comment) => {
+          commentBox.innerHTML += `<li>${comment.content}</li><a onClick="deleteComment(${comment.post_pk}, ${comment.comment_pk})">댓글삭제</a>
+          
+          `;
+        });
+
+        commentInput.value = "";
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  commentButton.addEventListener("click", createComment);
 </script>
 
 {% endblock content %}
