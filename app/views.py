@@ -53,6 +53,49 @@ def delete(request, post_pk):
     return redirect('home')
 
 
+@csrf_exempt
+def like(request):
+    if request.method == 'POST':
+        request_body = json.loads(request.body)
+        post_pk = request_body['post_pk']
+        post = Post.objects.get(pk=post_pk)
+        user_like = Like.objects.filter(user=request.user, post=post)
+
+        if (len(user_like) > 0):
+            user_like.delete()
+        else:
+            Like.objects.create(
+                    post=post,
+                    user=request.user
+            )
+        
+        response = {
+            'like_count': post.likes.count(),
+        }
+        return HttpResponse(json.dumps(response))
+
+@csrf_exempt
+def create_comment(request, post_pk):
+    
+    if request.method == 'POST':
+        request_body = json.loads(request.body)
+        content = request_body['content']
+        post = Post.objects.get(pk=post_pk);
+
+        Comment.objects.create(
+            post=post,
+            content=content,
+            author=request.user
+        )
+        
+        comments = post.comments.all()
+        comments_list = [{"content": comment.content, "comment_pk":comment.pk, "post_pk":comment.post.pk} for comment in comments]
+        response = {
+            "comments":comments_list,
+        }
+        return HttpResponse(json.dumps(response))
+
+@csrf_exempt
 def delete_comment(request, post_pk, comment_pk):
     comment = Comment.objects.get(pk=comment_pk)
     comment.delete()
