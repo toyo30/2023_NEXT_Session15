@@ -97,10 +97,19 @@ def create_comment(request, post_pk):
 
 @csrf_exempt
 def delete_comment(request, post_pk, comment_pk):
-    comment = Comment.objects.get(pk=comment_pk)
-    comment.delete()
-    return redirect('detail', post_pk)
+    
+    if request.method == 'POST':
+        post = Post.objects.get(pk=post_pk);
+        comment = Comment.objects.get(pk=comment_pk)
+        comment.delete()
 
+        
+        comments = post.comments.all()
+        comments_list = [{"content": comment.content, "comment_pk":comment.pk, "post_pk":comment.post.pk} for comment in comments]
+        response = {
+            "comments":comments_list,
+        }
+        return HttpResponse(json.dumps(response))
 
 def signup(request):
     if (request.method == 'POST'):
