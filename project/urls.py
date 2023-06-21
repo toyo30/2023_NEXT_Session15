@@ -37,4 +37,7 @@ urlpatterns = [
          views.delete_comment, name="delete_comment"),
     #like
     path('like', views.like, name="like"),
+
+    #create_comment
+    path('create_comment/<int:post_pk>', views.create_comment, name="create_comment"),
 ]
