@@ -31,15 +31,6 @@ def new(request):
 
 def detail(request, post_pk):
     post = Post.objects.get(pk=post_pk)
-
-    if (request.method == 'POST'):
-        Comment.objects.create(
-            post=post,
-            content=request.POST['content'],
-            author=request.user
-        )
-        return redirect('detail', post_pk)
-
     return render(request, 'detail.html', {'post': post})
 
 
